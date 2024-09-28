@@ -5,10 +5,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -54,7 +57,9 @@ public class App extends Application {
             height.set(Double.parseDouble(props.getProperty("size.height")));
             x.set(Double.parseDouble(props.getProperty("location.x")));
             y.set(Double.parseDouble(props.getProperty("location.y")));
-
+            red.setValue(Integer.parseInt(props.getProperty("red.color")));
+            green.setValue(Integer.parseInt(props.getProperty("green.color")));
+            blue.setValue(Integer.parseInt(props.getProperty("blue.color")));
 
         } else {
 
@@ -76,13 +81,28 @@ public class App extends Application {
         redSlider.setMajorTickUnit(255);
         redSlider.setMinorTickCount(5);
 
+        Slider greenSlider = new Slider();
+        greenSlider.setMin(0);
+        greenSlider.setMax(255);
+        greenSlider.setShowTickLabels(true);
+        greenSlider.setShowTickMarks(true);
+        greenSlider.setMajorTickUnit(255);
+        greenSlider.setMinorTickCount(5);
+
+        Slider blueSlider = new Slider();
+        blueSlider.setMin(0);
+        blueSlider.setMax(255);
+        blueSlider.setShowTickLabels(true);
+        blueSlider.setShowTickMarks(true);
+        blueSlider.setMajorTickUnit(255);
+        blueSlider.setMinorTickCount(5);
 
         VBox root = new VBox();
         root.setFillWidth(false);
         root.setAlignment(Pos.CENTER);
-        root.getChildren().add(redSlider);
+        root.getChildren().addAll(redSlider, greenSlider, blueSlider);
 
-        Scene scene = new Scene(root, 320, 200);
+        Scene scene = new Scene(root, width.get(), height.get());
 
         primaryStage.setX(x.get());
         primaryStage.setY(y.get());
@@ -90,17 +110,35 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-
         x.bind(primaryStage.xProperty());
         y.bind(primaryStage.yProperty());
         width.bind(primaryStage.widthProperty());
         height.bind(primaryStage.heightProperty());
 
+//      Actualizar el color del fondo al iniciar con los valores del "porps"
+        Color rgbColor = Color.rgb(red.getValue(), green.getValue(), blue.getValue());
+        BackgroundFill bgf = new BackgroundFill(rgbColor, CornerRadii.EMPTY, Insets.EMPTY);
+        root.setBackground(new Background(bgf));
+
         redSlider.valueProperty().bindBidirectional(red);
 
         red.addListener((o, ov, nv) -> {
-            Color c = Color.rgb(nv.intValue(), 0, 0);
-            root.setBackground(Background.fill(c));
+            Color r = Color.rgb(nv.intValue(), green.getValue(), blue.getValue());
+            root.setBackground(Background.fill(r));
+        });
+
+        greenSlider.valueProperty().bindBidirectional(green);
+
+        green.addListener((o, ov, nv) -> {
+            Color g = Color.rgb(red.getValue(),nv.intValue(), blue.getValue());
+            root.setBackground(Background.fill(g));
+        });
+
+        blueSlider.valueProperty().bindBidirectional(blue);
+
+        blue.addListener((o, ov ,nv) -> {
+            Color b = Color.rgb(red.getValue(),green.getValue(), nv.intValue());
+            root.setBackground(Background.fill(b));
         });
 
     }
@@ -127,7 +165,9 @@ public class App extends Application {
         props.setProperty("size.height", "" +  height.getValue());
         props.setProperty("location.x", "" + x.getValue());
         props.setProperty("location.y", "" + y.getValue());
+        props.setProperty("red.color", "" + red.getValue());
+        props.setProperty("green.color", "" + green.getValue());
+        props.setProperty("blue.color", "" + blue.getValue());
         props.store(fos, "Estado de la ventana");
-
     }
 }
