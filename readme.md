@@ -8,4 +8,4 @@ You can also see the exact value in real time when moving the Slider.
 
 ## Image
 
-<img src="file:///C:/Users/crttn/AppData/Roaming/marktext/images/2024-09-28-02-51-26-image.png" title="" alt="" data-align="center">
+<img title="" src="./images/image.png" alt="" width="" data-align="center">
