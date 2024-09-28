@@ -1,5 +1,6 @@
 package es.crttn.dad;
 
+import com.sun.scenario.effect.impl.state.HVSeparableKernel;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -8,12 +9,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -27,6 +28,10 @@ import java.util.Properties;
  *
  */
 public class App extends Application {
+
+    private Label redLabel = new Label();
+    private Label greenLabel = new Label();
+    private Label blueLabel = new Label();
 
     private DoubleProperty x = new SimpleDoubleProperty();
     private DoubleProperty y = new SimpleDoubleProperty();
@@ -73,6 +78,15 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        redLabel.setText("Rojo - " + red.getValue());
+        redLabel.setFont(Font.font ("Lucida Sans Unicode", 16));
+
+        greenLabel.setText("Verde - " + green.getValue());
+        greenLabel.setFont(Font.font ("Lucida Sans Unicode", 16));
+
+        blueLabel.setText("Azul - " + blue.getValue());
+        blueLabel.setFont(Font.font ("Lucida Sans Unicode", 16));
+
         Slider redSlider = new Slider();
         redSlider.setMin(0);
         redSlider.setMax(255);
@@ -97,10 +111,26 @@ public class App extends Application {
         blueSlider.setMajorTickUnit(255);
         blueSlider.setMinorTickCount(5);
 
+        VBox vb1 = new VBox();
+        vb1.setFillWidth(false);
+        vb1.setAlignment(Pos.CENTER);
+        vb1.getChildren().addAll(redLabel, redSlider);
+
+
+        VBox vb2 = new VBox();
+        vb2.setFillWidth(false);
+        vb2.setAlignment(Pos.CENTER);
+        vb2.getChildren().addAll(greenLabel, greenSlider);
+
+        VBox vb3 = new VBox();
+        vb3.setFillWidth(false);
+        vb3.setAlignment(Pos.CENTER);
+        vb3.getChildren().addAll(blueLabel, blueSlider);
+
         VBox root = new VBox();
         root.setFillWidth(false);
         root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(redSlider, greenSlider, blueSlider);
+        root.getChildren().addAll(vb1, vb2, vb3);
 
         Scene scene = new Scene(root, width.get(), height.get());
 
@@ -123,6 +153,7 @@ public class App extends Application {
         redSlider.valueProperty().bindBidirectional(red);
 
         red.addListener((o, ov, nv) -> {
+            redLabel.setText("Rojo - " + nv);
             Color r = Color.rgb(nv.intValue(), green.getValue(), blue.getValue());
             root.setBackground(Background.fill(r));
         });
@@ -130,6 +161,7 @@ public class App extends Application {
         greenSlider.valueProperty().bindBidirectional(green);
 
         green.addListener((o, ov, nv) -> {
+            greenLabel.setText("Verde - " + nv);
             Color g = Color.rgb(red.getValue(),nv.intValue(), blue.getValue());
             root.setBackground(Background.fill(g));
         });
@@ -137,6 +169,7 @@ public class App extends Application {
         blueSlider.valueProperty().bindBidirectional(blue);
 
         blue.addListener((o, ov ,nv) -> {
+            blueLabel.setText("Azul - " + nv);
             Color b = Color.rgb(red.getValue(),green.getValue(), nv.intValue());
             root.setBackground(Background.fill(b));
         });
